@@ -1,4 +1,4 @@
-import { Mapper, AnyKey, Predicate, TypeProtection, KeyValuePair } from "../types";
+import { Mapper, AnyKey, Predicate, TypeProtection, KeyValuePair, Dictionary } from "../types";
 import type { ChainOperation } from "./operation";
 
 
@@ -23,6 +23,8 @@ export interface Chain<T> extends ChainOperation<T> {
   some(predicate: Predicate<T>): boolean;
   every(predicate: Predicate<T>): boolean;
   every<U extends T>(predicate: TypeProtection<T, U>): this is Chain<U>;
+
+  groupBy<K extends AnyKey>(cb: Mapper<T, K>): Record<K, T[]>;
 }
 
 interface OperationFn {
@@ -46,7 +48,7 @@ export class ChainImpl<T> implements Chain<T> {
   }
 
 
-  private createIterable(): Iterable<any> {
+  private createIterable(): Iterable<T> {
     let value: Iterable<any> = this._items;
     for (const f of this._operations) {
       value = f(value)
@@ -63,7 +65,6 @@ export class ChainImpl<T> implements Chain<T> {
     const ret: Record<any, any> = {};
     for (const item of this.createIterable()) {
       ret[keySelector(item)] = valueSelector?.(item) ?? item;
-      [].reduce
     }
     return ret as any;
   }
@@ -84,6 +85,18 @@ export class ChainImpl<T> implements Chain<T> {
   every<U extends T>(predicate: TypeProtection<T, U>): this is Chain<U>;
   every(predicate: Predicate<T>): boolean {
     return this.toArray().every(predicate);
+  }
+
+  groupBy<K extends AnyKey>(cb: Mapper<T, K>): Record<K, T[]> {
+    let group: Record<K, T[]> = {} as any;
+    for (const item of this.createIterable()) {
+      const type = cb(item);
+      if (!group[type]) {
+        group[type] = [];
+      }
+      group[type].push(item);
+    }
+    return group;
   }
 
 

@@ -50,4 +50,22 @@ export function range(start: number, end: number, step = 1): Chain<number> {
   return new ChainImpl<number>(range());
 }
 
+
+
+export function toPairs<T extends {}>(obj: T): Chain<KeyValuePair<T>> {
+  const toPairs = function*() {
+    for (const p of Object.entries(obj)) {
+      yield p as KeyValuePair<T>;
+    }
+    // Object.entries不返回可枚举的symbol
+    for (const s of Object.getOwnPropertySymbols(obj)) {
+      const desc = Object.getOwnPropertyDescriptor(obj, s)!;
+      if (desc.enumerable) {
+        yield [s, (obj as any)[s]] as KeyValuePair<T>;
+      }
+    }
+  }
+  return new ChainImpl(toPairs());
+}
+
 export type { Chain } from "./Chain";

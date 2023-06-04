@@ -1,7 +1,7 @@
 import { Chain } from "./chain/Chain";
-import { PrimitiveType } from "./types";
+import { KeyValuePair, PrimitiveType } from "./types";
 import type {} from "./global";
-import { chain, range, repeat } from "./chain";
+import { chain, range, repeat, toPairs } from "./chain";
 
 declare global {
   interface Array<T> {
@@ -14,8 +14,8 @@ declare global {
     repeat<V>(factory: (() => V), count: number): Chain<V>;
   }
 
-  interface ObjectConstructor {
-    
+  interface Object {
+    toPairs<T extends {}>(this: T): Chain<KeyValuePair<T>>;
   }
 }
 
@@ -26,6 +26,12 @@ function applyToGlobal() {
     };
     Array.range = range;
     Array.repeat = repeat;    
+  }
+
+  if (!Object.prototype.toPairs) {
+    Object.prototype.toPairs = function () {
+      return toPairs(this);
+    };
   }
 }
 

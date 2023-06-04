@@ -4,7 +4,7 @@
   "author": "LoveKicher <szlproche@163.com>",
   "description": "LINQ-style chaining methods for iterables with strict type-checking",
   "keywords": [
-    "array", "iterator", "iterable", "linq", 
+    "array", "iterator", "iterable", "linq", "lodash",
     "method chaining", "fluent interface", "typescript",
     "lazy evaluate", "esnext"
   ],
@@ -18,7 +18,7 @@
     "./types": "./lib/types.js"
   },
   "scripts": {
-    "build": "del-cli ./lib && tsc"
+    "build": "del-cli ./lib/* && tsc"
   },
   "dependencies": {
     "core-js": "^3.21.1"

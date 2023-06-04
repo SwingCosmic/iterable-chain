@@ -72,3 +72,39 @@ describe("测试起始方法", () => {
   })
 
 })
+
+describe("测试终结方法", () => {
+  
+  test("groupBy", () => {
+
+    interface TestItem {
+      type: "a" | "b",
+      name: string;
+    }
+    const list: TestItem[] = [
+      {
+        type: "a",
+        name: "type a 1"
+      },
+      {
+        type: "a",
+        name: "type a 2"
+      },
+      {
+        type: "b",
+        name: "type b"
+      },
+    ];
+
+    const group = list
+      .chain()
+      .groupBy(i => i.type);
+    
+    expect(Object.keys(group)).toEqual(["a", "b"]);
+    expect(group.a).toHaveLength(2);
+    expect(group.b).toHaveLength(1);
+
+    
+  })
+
+})
