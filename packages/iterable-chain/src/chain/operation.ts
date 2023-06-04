@@ -1,4 +1,4 @@
-import type { Chain } from ".";
+import type { Chain } from "./Chain";
 import { AnyFunction, Mapper, Predicate, TypeProtection } from "../types";
 
 export interface ChainOperation<T> {

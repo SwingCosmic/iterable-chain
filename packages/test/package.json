@@ -1,0 +1,15 @@
+{
+  "name": "iterable-chain-test",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "iterable-chain": "*"
+  }
+}

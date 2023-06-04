@@ -15,7 +15,7 @@ export type KeyName<T> = Exclude<keyof T, MethodName<T>>;
 export type PropertyName<T> = KeyName<T> & string;
 
 export type Dictionary<T> = Record<string, T>;
-
+export type KeyValuePair<T extends {}> = [key: keyof T, value: T[keyof T]];
 
 export type Mapper<T, U> = (obj: T) => U;
 export type Action<T> = Mapper<T, void>;

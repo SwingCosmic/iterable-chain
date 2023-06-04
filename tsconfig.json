@@ -4,8 +4,6 @@
     "module": "esnext",
     "strict": true,
     "jsx": "preserve",
-    "declaration": true,
-    "moduleResolution": "node",
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -16,12 +14,8 @@
       "esnext",
       "dom",
       "dom.iterable"
-    ],
-    "outDir": "lib"
+    ]
   },
-  "include": [
-    "src/**/*.ts"
-  ],
   "exclude": [
     "node_modules"
   ]

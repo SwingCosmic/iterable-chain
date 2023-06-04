@@ -1,9 +1,7 @@
 import {test, expect, jest, describe,beforeAll }from "@jest/globals";
-import "../src/global";
-import {Chain, chain, applyToGlobal} from "../src";
+import "iterable-chain/global";
+import {Chain, chain} from "iterable-chain";
 
-
-applyToGlobal();
 expect(Array.range).toBeDefined()
 
 
