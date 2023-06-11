@@ -1,6 +1,6 @@
 import { TypeProtection, Predicate, Mapper, AnyKey, KeyValuePair } from "../types";
 import type { Chain } from "./Chain";
-import { ChainImpl } from "./Chain";
+import { ChainImpl } from "./ChainImpl";
 
 
 export function chain<T>(item: Iterable<T>): Chain<T> {

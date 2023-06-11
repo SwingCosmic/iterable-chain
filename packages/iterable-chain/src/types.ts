@@ -25,8 +25,9 @@ export type NumberMapper<T> = Mapper<T, number>;
 export type Predicate<T> = Mapper<T, boolean>;
 export type TypeProtection<T, U extends T> = (obj: T) => obj is U;
 
-type ThisTypeMethod<F extends AnyFunction, TThis> = F extends (...args: infer P) => infer R 
+export type Comparer<T> = (a: T, b: T) => -1 | 0 | 1;
+
+type ThisTypeMethod<F extends AnyFunction, TThis = undefined> = F extends (...args: infer P) => infer R 
   ? (this: TThis, ...args: P) => R
   : never;
   
-export type OrderString = "asc" | "desc";
