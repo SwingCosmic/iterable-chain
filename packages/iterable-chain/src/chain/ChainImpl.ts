@@ -1,14 +1,17 @@
 import { Mapper, AnyKey, Predicate, TypeProtection, KeyValuePair, Comparable } from "../types";
 import { ascendingComparer, createKeyedArray, descendingComparer } from "../util";
-import { Chain, OperationFn } from "./Chain";
+import { Chain } from "./Chain";
 
 
 export class ChainImpl<T> implements Chain<T> {
 
-  private readonly _items: Iterable<T>;
-  private _operations: OperationFn[] = [];
+  private _iterator: IterableIterator<T>;
   constructor(array: Iterable<T>) {
-    this._items = array;
+    this._iterator = (function*() {
+      for (const item of array) {
+        yield item;
+      }
+    })();
   }
 
 
@@ -20,29 +23,22 @@ export class ChainImpl<T> implements Chain<T> {
   }
 
 
-  private createIterable(): Iterable<T> {
-    let value: Iterable<any> = this._items;
-    for (const f of this._operations) {
-      value = f(value);
-    }
-    return value;
-  }
 
   toArray(): T[] {
-    return Array.from(this.createIterable());
+    return Array.from(this._iterator);
   }
 
   toDictionary<K extends AnyKey>(keySelector: Mapper<T, K>): Record<K, T>;
   toDictionary<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, U>): Record<K, U> {
     const ret: Record<any, any> = {};
-    for (const item of this.createIterable()) {
+    for (const item of this._iterator) {
       ret[keySelector(item)] = valueSelector?.(item) ?? item;
     }
     return ret as any;
   }
 
   toObject<O extends {}>(this: ChainImpl<KeyValuePair<O>>): O {
-    return Object.fromEntries<O[keyof O]>(this.createIterable()) as O;
+    return Object.fromEntries<O[keyof O]>(this._iterator) as O;
   }
 
   reduce(cb: (previousValue: T, currentValue: T) => T): T;
@@ -61,7 +57,7 @@ export class ChainImpl<T> implements Chain<T> {
 
   groupBy<K extends AnyKey>(cb: Mapper<T, K>): Record<K, T[]> {
     let group: Record<K, T[]> = {} as any;
-    for (const item of this.createIterable()) {
+    for (const item of this._iterator) {
       const type = cb(item);
       if (!group[type]) {
         group[type] = [];
@@ -76,34 +72,37 @@ export class ChainImpl<T> implements Chain<T> {
   filter<U extends T>(cb: TypeProtection<T, U>): Chain<U>;
   filter<U extends T>(cb: Predicate<T>): Chain<U>;
   filter(cb: Predicate<T>): Chain<T> {
-    this._operations.push(function* (items: Iterable<T>) {
-      for (const e of items) {
+    const iterator = this._iterator;
+    this._iterator = (function* () {
+      for (const e of iterator) {
         if (cb(e)) {
           yield e;
         }
       }
-    });
+    })();
     return this;
   }
 
   map<U>(cb: Mapper<T, U>): Chain<U> {
-    this._operations.push(function* (items: Iterable<T>) {
-      for (const e of items) {
-        yield cb(e);
+    const iterator = this._iterator;
+    this._iterator = (function* () {
+      for (const e of iterator) {
+        yield cb(e) as any;
       }
-    });
+    })();
     return this as any;
   }
 
   orderBy<K extends Comparable>(keySelector: Mapper<T, K>, desc = false): Chain<T> {
-    this._operations.push(function* (items: Iterable<T>) {
-      const keyedArray = createKeyedArray<T, K>(items, keySelector);
+    const iterator = this._iterator;
+    this._iterator = (function* () {
+      const keyedArray = createKeyedArray<T, K>(iterator, keySelector);
       const comparer = desc ? descendingComparer : ascendingComparer;
       keyedArray.sort(comparer);
       for (const e of keyedArray) {
         yield e.value;
       }
-    });
+    })();
     return this;
   }
 

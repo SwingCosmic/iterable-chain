@@ -26,8 +26,3 @@ export interface Chain<T> extends ChainOperation<T> {
 
   groupBy<K extends AnyKey>(cb: Mapper<T, K>): Record<K, T[]>;
 }
-
-export interface OperationFn {
-  (items: Iterable<any>): Generator<any, void, unknown>;
-}
-
