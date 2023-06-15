@@ -1,5 +1,5 @@
 {
-  "name": "iterable-chain",
+  "name": "@lovekicher/iterable-chain",
   "version": "0.3.0",
   "author": "LoveKicher <szlproche@163.com>",
   "description": "LINQ-style chaining methods for iterables with strict type-checking",
@@ -18,7 +18,15 @@
     "./types": "./lib/types.js"
   },
   "scripts": {
-    "build": "del-cli ./lib/* && tsc"
+    "build": "del-cli ./lib/* && tsc",
+    "publish": "npm publish"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
     "core-js": "^3.21.1"

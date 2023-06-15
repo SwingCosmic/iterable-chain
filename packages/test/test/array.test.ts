@@ -1,6 +1,6 @@
 import {test, expect, jest, describe,beforeAll }from "@jest/globals";
-import "iterable-chain/global";
-import {Chain, chain} from "iterable-chain";
+import "@lovekicher/iterable-chain/global";
+import {Chain, chain} from "@lovekicher/iterable-chain";
 
 expect(Array.range).toBeDefined()
 
