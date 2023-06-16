@@ -1,6 +1,6 @@
 {
   "name": "@lovekicher/iterable-chain",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "LoveKicher <szlproche@163.com>",
   "description": "LINQ-style chaining methods for iterables with strict type-checking",
   "keywords": [
@@ -8,6 +8,14 @@
     "method chaining", "fluent interface", "typescript",
     "lazy evaluate", "esnext"
   ],
+  "homepage": "https://github.com/SwingCosmic/iterable-chain#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SwingCosmic/iterable-chain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/SwingCosmic/iterable-chain/issues"
+  },
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -19,7 +27,7 @@
   },
   "scripts": {
     "build": "del-cli ./lib/* && tsc",
-    "publish": "npm publish"
+    "publish:npm": "npm publish"
   },
   "files": [
     "lib"

@@ -1,4 +1,4 @@
-import { Mapper, AnyKey, Predicate, TypeProtection, KeyValuePair, Comparable } from "../types";
+import { Mapper, AnyKey, Predicate, TypeProtection, KeyValuePair, Comparable, NumberMapper } from "../types";
 import { ascendingComparer, createKeyedArray, descendingComparer } from "../util";
 import { Chain } from "./Chain";
 
@@ -24,6 +24,7 @@ export class ChainImpl<T> implements Chain<T> {
 
 
 
+  //#region Collectors
   toArray(): T[] {
     return Array.from(this._iterator);
   }
@@ -67,6 +68,31 @@ export class ChainImpl<T> implements Chain<T> {
     return group;
   }
 
+  sum(this: Chain<number>): number;
+  sum(selector?: NumberMapper<any>): number {
+    let result = 0;
+    let array = this.toArray();
+    // 循环比reduce更快
+    for (let i = 0; i < array.length; i++) {
+      const item = array[i];
+      result += selector ? selector(item) : (item as number);
+    }
+    return result;
+  }
+
+  average(this: Chain<number>): number;
+  average(selector?: NumberMapper<any>): number {
+    let result = 0;
+    let array = this.toArray();
+    // 循环比reduce更快
+    for (let i = 0; i < array.length; i++) {
+      const item = array[i];
+      result += selector ? selector(item) : (item as number);
+    }
+    return array.length > 0 ? result / array.length : 0;
+  }
+  //#endregion
+
 
   //#region Operations
   filter<U extends T>(cb: TypeProtection<T, U>): Chain<U>;
@@ -105,5 +131,7 @@ export class ChainImpl<T> implements Chain<T> {
     })();
     return this;
   }
+
+  //#endregion
 
 }
