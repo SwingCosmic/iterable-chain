@@ -5,13 +5,13 @@ import { Chain } from "./Chain";
 
 export class ChainImpl<T> implements Chain<T> {
 
-  private _iterator: IterableIterator<T>;
+  private _iterator: () => Generator<T>;
   constructor(array: Iterable<T>) {
-    this._iterator = (function*() {
+    this._iterator = function*() {
       for (const item of array) {
         yield item;
       }
-    })();
+    };
   }
 
 
@@ -26,13 +26,13 @@ export class ChainImpl<T> implements Chain<T> {
 
   //#region Collectors
   toArray(): T[] {
-    return Array.from(this._iterator);
+    return Array.from(this._iterator());
   }
 
   toDictionary<K extends AnyKey>(keySelector: Mapper<T, K>): Record<K, T>;
   toDictionary<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, U>): Record<K, U> {
     const ret: Record<any, any> = {};
-    for (const item of this._iterator) {
+    for (const item of this._iterator()) {
       ret[keySelector(item)] = valueSelector?.(item) ?? item;
     }
     return ret as any;
@@ -41,14 +41,14 @@ export class ChainImpl<T> implements Chain<T> {
   toMap<K extends AnyKey>(keySelector: Mapper<T, K>): Map<K, T>;
   toMap<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, U>): Map<K, U> {
     const ret = new Map<K, any>();
-    for (const item of this._iterator) {
+    for (const item of this._iterator()) {
       ret.set(keySelector(item), valueSelector?.(item) ?? item);
     }
     return ret;
   }
 
   toObject<O extends {}>(this: ChainImpl<KeyValuePair<O>>): O {
-    return Object.fromEntries<O[keyof O]>(this._iterator) as O;
+    return Object.fromEntries<O[keyof O]>(this._iterator()) as O;
   }
 
   reduce(cb: (previousValue: T, currentValue: T) => T): T;
@@ -67,7 +67,7 @@ export class ChainImpl<T> implements Chain<T> {
 
   groupBy<K extends AnyKey>(cb: Mapper<T, K>): Record<K, T[]> {
     let group: Record<K, T[]> = {} as any;
-    for (const item of this._iterator) {
+    for (const item of this._iterator()) {
       const type = cb(item);
       if (!group[type]) {
         group[type] = [];
@@ -112,47 +112,47 @@ export class ChainImpl<T> implements Chain<T> {
   filter<U extends T>(cb: Predicate<T>): Chain<U>;
   filter(cb: Predicate<T>): Chain<T> {
     const iterator = this._iterator;
-    this._iterator = (function* () {
-      for (const e of iterator) {
+    this._iterator = function* () {
+      for (const e of iterator()) {
         if (cb(e)) {
           yield e;
         }
       }
-    })();
+    };
     return this;
   }
 
   map<U>(cb: Mapper<T, U>): Chain<U> {
     const iterator = this._iterator;
-    this._iterator = (function* () {
-      for (const e of iterator) {
+    this._iterator = function* () {
+      for (const e of iterator()) {
         yield cb(e) as any;
       }
-    })();
+    };
     return this as any;
   }
 
   orderBy<K extends Comparable>(keySelector: Mapper<T, K>, desc = false): Chain<T> {
     const iterator = this._iterator;
-    this._iterator = (function* () {
-      const keyedArray = createKeyedArray<T, K>(iterator, keySelector);
+    this._iterator = function* () {
+      const keyedArray = createKeyedArray<T, K>(iterator(), keySelector);
       const comparer = desc ? descendingComparer : ascendingComparer;
       keyedArray.sort(comparer);
       for (const e of keyedArray) {
         yield e.value;
       }
-    })();
+    };
     return this;
   }
 
   reverse(): Chain<T> {
     const iterator = this._iterator;
-    this._iterator = (function* () {
-      const array = Array.from(iterator).reverse();
+    this._iterator = function* () {
+      const array = Array.from(iterator()).reverse();
       for (let i = 0; i < array.length; i++) {
         yield array[i];
       }
-    })();
+    };
     return this;
   }
 

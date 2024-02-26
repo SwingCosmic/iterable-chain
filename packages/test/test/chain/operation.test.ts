@@ -46,3 +46,21 @@ describe("测试操作方法", () => {
   })
 
 })
+
+describe("测试重复调用", () => {
+
+  test("多次reverse应该和原来一样", () => {
+    const data = [1,2,3,4,5,6];
+
+    const result = data
+      .chain()
+      .reverse()
+      .reverse()
+      .reverse()
+      .reverse()
+      .toArray();
+
+    expect(result).toEqual([1,2,3,4,5,6]);
+  })
+
+})

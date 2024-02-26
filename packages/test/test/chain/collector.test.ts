@@ -73,3 +73,17 @@ describe("测试终结方法", () => {
     expect([].chain().average()).toEqual(0);
   })
 })
+
+describe("测试重复调用", () => {
+
+  test("多次sum应该和原来一样", () => {
+    const data = [1,2,3,4,5,6];
+
+    const c = data.chain();
+
+    expect(c.sum()).toEqual(21);
+    expect(c.sum()).toEqual(21);
+    expect(c.sum()).toEqual(21);
+  })
+
+})
