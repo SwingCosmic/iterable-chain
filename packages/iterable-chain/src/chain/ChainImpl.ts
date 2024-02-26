@@ -38,6 +38,15 @@ export class ChainImpl<T> implements Chain<T> {
     return ret as any;
   }
 
+  toMap<K extends AnyKey>(keySelector: Mapper<T, K>): Map<K, T>;
+  toMap<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector?: Mapper<T, U>): Map<K, U> {
+    const ret = new Map<K, any>();
+    for (const item of this._iterator) {
+      ret.set(keySelector(item), valueSelector?.(item) ?? item);
+    }
+    return ret;
+  }
+
   toObject<O extends {}>(this: ChainImpl<KeyValuePair<O>>): O {
     return Object.fromEntries<O[keyof O]>(this._iterator) as O;
   }
@@ -91,6 +100,10 @@ export class ChainImpl<T> implements Chain<T> {
     }
     return array.length > 0 ? result / array.length : 0;
   }
+
+  join(separator?: string | undefined): string {
+    return this.toArray().join(separator);
+  }
   //#endregion
 
 
@@ -127,6 +140,17 @@ export class ChainImpl<T> implements Chain<T> {
       keyedArray.sort(comparer);
       for (const e of keyedArray) {
         yield e.value;
+      }
+    })();
+    return this;
+  }
+
+  reverse(): Chain<T> {
+    const iterator = this._iterator;
+    this._iterator = (function* () {
+      const array = Array.from(iterator).reverse();
+      for (let i = 0; i < array.length; i++) {
+        yield array[i];
       }
     })();
     return this;

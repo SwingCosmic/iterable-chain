@@ -9,4 +9,6 @@ export interface ChainOperation<T> {
   map<U>(cb: Mapper<T, U>): Chain<U>;
 
   orderBy<K extends Comparable>(keySelector: Mapper<T, K>, desc?: boolean): Chain<T>;
+
+  reverse(): Chain<T>;
 }

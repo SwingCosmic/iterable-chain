@@ -1,4 +1,4 @@
-import { Mapper } from "./types";
+import { AnyKey, Constructor, Mapper } from "./types";
 
 /**
  * 根据Same Value Zero规则比较相等性，即NaN == NaN且-0 == +0
@@ -35,4 +35,31 @@ export const ascendingComparer = function<T, K>(a: Keyed<T, K>, b: Keyed<T, K>) 
 
 export const descendingComparer = function<T, K>(a: Keyed<T, K>, b: Keyed<T, K>) {
   return a.key > b.key ? -1 : a.key < b.key ? 1 : 0;
+}
+
+export function defineProperty<T extends {}, K extends AnyKey>(
+  obj: T, 
+  prop: K, 
+  attributes: PropertyDescriptor & ThisType<any>
+): T {
+  const originAttrs = Object.getOwnPropertyDescriptor(obj, prop);
+  if (originAttrs && !originAttrs.configurable) {
+    console.warn(new TypeError(`Property '${prop.toString()}' is not configurable`));
+    return obj;
+  }
+  Reflect.defineProperty(obj, prop, attributes);
+  return obj;
+}
+
+export function extendPrototype<T extends {}, K extends AnyKey, M extends (this: T, ...args: any[]) => any>(
+  obj: Constructor<T>, 
+  prop: K, 
+  method: M
+) {
+  defineProperty(obj.prototype, prop, {
+    value: method,
+    configurable: true,
+    enumerable: false,
+    writable: true,
+  });
 }

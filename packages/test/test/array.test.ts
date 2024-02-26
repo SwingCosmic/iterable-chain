@@ -71,4 +71,39 @@ describe("测试起始方法", () => {
     })
   })
 
+  describe("remove", () => {
+    test("remove primitive", () => {
+      const r = [1, 2, 3, 2, 5];
+      r.remove(2);
+      expect(r).toEqual([1,3,2,5]);
+    })
+
+    test("cannot remove primitive not in array", () => {
+      const r = [1, 2, 3, 2, 5];
+      r.remove(9);
+      expect(r).toHaveLength(5);
+    })
+
+    class A {
+      value: number;
+      constructor(v: number) {
+        this.value = v;
+      }
+    }
+    
+
+    test("remove object", () => {
+      const a1 = new A(1), a2 = new A(2), a3 = new A(3);
+      const r = [a1, a2, a3, a1];
+      r.remove(a2);
+      expect(r).toEqual([a1, a3, a1]);
+    })
+
+    test("cannot remove new object instance", () => {
+      const r = [new A(1), new A(2), new A(3), new A(1)];
+      r.remove(new A(1));
+      expect(r).toHaveLength(4);
+    })
+  })
+
 })

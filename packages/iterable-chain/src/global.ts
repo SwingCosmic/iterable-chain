@@ -1,11 +1,15 @@
 import { Chain } from "./chain/Chain";
-import { KeyValuePair, PrimitiveType } from "./types";
+import { AnyKey, Constructor, KeyValuePair, PrimitiveType } from "./types";
 import type {} from "./global";
 import { chain, range, repeat, toPairs } from "./chain";
+import { remove } from "./extension/array";
+import { times } from "./extension/string";
+import { extendPrototype } from "./util";
 
 declare global {
   interface Array<T> {
     chain(): Chain<T>; 
+    remove(item: T): void;
   }
 
   interface ArrayConstructor {
@@ -17,21 +21,37 @@ declare global {
   interface Object {
     toPairs<T extends {}>(this: T): Chain<KeyValuePair<T>>;
   }
+
+  interface String {
+    times(count: number): string;
+  }
 }
+
 
 function applyToGlobal() {
   if (!Array.prototype.chain) {
-    Array.prototype.chain = function () {
+    extendPrototype(Array, "chain", function () {
       return chain(this);
-    };
+    });
+    
+    extendPrototype(Array, "remove",function (item) {
+      return remove(this, item);
+    });
+
     Array.range = range;
-    Array.repeat = repeat;    
+    Array.repeat = repeat;   
   }
 
   if (!Object.prototype.toPairs) {
-    Object.prototype.toPairs = function () {
+    extendPrototype(Object, "toPairs", function () {
       return toPairs(this);
-    };
+    });
+  }
+
+  if (!String.prototype.times) {
+    extendPrototype(String, "times", function (count) {
+      return times(this as string, count);
+    });
   }
 }
 

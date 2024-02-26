@@ -33,4 +33,16 @@ describe("测试操作方法", () => {
   })
 
 
+  test("reverse", () => {
+    const data = [1, 3, -45, 9.4, 666, 3];
+
+    const result = data
+      .chain()
+      .reverse()
+      .toArray();
+
+    
+    expect(result).toEqual([3, 666, 9.4, -45, 3, 1]);
+  })
+
 })

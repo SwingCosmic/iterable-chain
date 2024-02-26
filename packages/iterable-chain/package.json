@@ -1,6 +1,6 @@
 {
   "name": "@lovekicher/iterable-chain",
-  "version": "0.3.1",
+  "version": "0.4.2",
   "author": "LoveKicher <szlproche@163.com>",
   "description": "LINQ-style chaining methods for iterables with strict type-checking",
   "keywords": [

@@ -7,6 +7,9 @@ export interface ChainCollector<T> {
   toDictionary<K extends AnyKey>(keySelector: Mapper<T, K>): Record<K, T>;
   toDictionary<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, U>): Record<K, U>;
 
+  toMap<K extends AnyKey>(keySelector: Mapper<T, K>): Map<K, T>;
+  toMap<K extends AnyKey, U>(keySelector: Mapper<T, K>, valueSelector: Mapper<T, U>): Map<K, U>;
+
   toObject<O extends {}>(this: Chain<KeyValuePair<O>>): O;
 
 
@@ -25,4 +28,6 @@ export interface ChainCollector<T> {
 
   average(this: Chain<number>): number;
   average(selector: NumberMapper<T>): number;
+
+  join(separator?: string): string;
 }
